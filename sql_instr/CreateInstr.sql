@@ -131,3 +131,19 @@ FROM Orders O
 JOIN Shops S ON O.shop = S.shopID
 JOIN Products P ON P.productID = O.product AND P.shopID = S.shopID
 ORDER BY O.ordertime DESC;
+
+-- Add a user and give the privilieges to the user
+CREATE USER app_user WITH PASSWORD 'abc';
+GRANT SELECT ON ShopInfoView TO app_user;
+GRANT SELECT, UPDATE, INSERT ON Products TO app_user;
+GRANT SELECT, INSERT, UPDATE ON Users TO app_user;
+GRANT SELECT ON UserInfoView TO app_user;
+GRANT SELECT, INSERT ON Shops TO app_user;
+GRANT SELECT, INSERT ON Sellers TO app_user;
+GRANT SELECT ON OrdersInfoView TO app_user;
+GRANT SELECT, INSERT ON Orders TO app_user;
+
+-- Add indexes
+CREATE INDEX email_index ON Users (Email);
+CREATE INDEX shop_index ON Shops (ShopName);
+CREATE INDEX product_index ON Products (Name);
