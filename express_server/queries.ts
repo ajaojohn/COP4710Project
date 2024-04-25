@@ -99,28 +99,38 @@ const checkIfUserExists = async (email: string) => {
  * @returns Insert query metadata
  */
 const createUser = async (userInfo: ISignUpInfo) => {
-  // Set query string
-  const query = `
-  INSERT INTO Users
-  (Email, FirstName, LastName, DOB, Password)
-  VALUES
-  (?, ?, ?, ?, ?)`;
+  try {
+    await sequelize.query('BEGIN;', { type: QueryTypes.RAW });
+    // Lock the table
+    await sequelize.query('LOCK TABLE Users IN ACCESS EXCLUSIVE MODE;', { type: QueryTypes.RAW });
 
-  // Get ouput from running query string
-  const [results, metadata] = await sequelize.query(query, {
-    replacements: [
-      userInfo.email,
-      userInfo.firstname,
-      userInfo.lastname,
-      userInfo.dob,
-      userInfo.password,
-    ],
-    type: QueryTypes.INSERT,
-  });
-  // Log query output
-  console.log(results, metadata);
-  // Return related metadata
-  return metadata;
+    // Set query string
+    const query = `
+    INSERT INTO Users
+    (Email, FirstName, LastName, DOB, Password)
+    VALUES
+    (?, ?, ?, ?, ?)`;
+
+    // Get ouput from running query string
+    const [results, metadata] = await sequelize.query(query, {
+      replacements: [
+        userInfo.email,
+        userInfo.firstname,
+        userInfo.lastname,
+        userInfo.dob,
+        userInfo.password,
+      ],
+      type: QueryTypes.INSERT,
+    });
+    await sequelize.query('COMMIT;', { type: QueryTypes.RAW });
+    // Log query output
+    console.log(results, metadata);
+    // Return related metadata
+    return metadata;
+  } catch (error) {
+    console.error('Failed to update product quantity:', error);
+    await sequelize.query('ROLLBACK;', { type: QueryTypes.RAW });
+  }
 };
 
 /**
@@ -206,20 +216,30 @@ const getShopsOwnedByUser = async (userid: string) => {
  * @returns An list of IShopInfo object owned by user
  */
 const createShop = async (shopInfo: ICreateShopInfo) => {
-  // Set query string
-  const query = `
-  INSERT INTO Shops (ShopName, EstablishDate, Description, Owner)
-  VALUES (?, CURRENT_DATE, ?, ?);
-  `;
-  // Get query results from using query string and sequelize
-  const [results, metadata] = await sequelize.query(query, {
-    replacements: [shopInfo.shopname, shopInfo.description, shopInfo.ownerid],
-    type: QueryTypes.INSERT,
-  });
-  // Print out for debugging purposes
-  console.log(results);
-  // Return results to caller
-  return results;
+  try {
+    await sequelize.query('BEGIN;', { type: QueryTypes.RAW });
+
+    // Lock the table
+    await sequelize.query('LOCK TABLE Shops IN ACCESS EXCLUSIVE MODE;', { type: QueryTypes.RAW });
+    // Set query string
+    const query = `
+    INSERT INTO Shops (ShopName, EstablishDate, Description, Owner)
+    VALUES (?, CURRENT_DATE, ?, ?);
+    `;
+    // Get query results from using query string and sequelize
+    const [results, metadata] = await sequelize.query(query, {
+      replacements: [shopInfo.shopname, shopInfo.description, shopInfo.ownerid],
+      type: QueryTypes.INSERT,
+    });
+    await sequelize.query('COMMIT;', { type: QueryTypes.RAW });
+    // Print out for debugging purposes
+    console.log(results);
+    // Return results to caller
+    return results;
+  } catch (error) {
+    console.error('Failed to update product quantity:', error);
+    await sequelize.query('ROLLBACK;', { type: QueryTypes.RAW });
+  }
 };
 
 /**
@@ -227,20 +247,29 @@ const createShop = async (shopInfo: ICreateShopInfo) => {
  * @param productInfo ICreateProductInfo object containing shop info
  */
 const makeSeller = async (userID: string) => {
-  // Set query string
-  const query = `
-  INSERT INTO Sellers (sellerid)
-  VALUES (?);
-  `;
-  // Get query results from using query string and sequelize
-  const [results, metadata] = await sequelize.query(query, {
-    replacements: [userID],
-    type: QueryTypes.INSERT,
-  });
-  // Print out for debugging purposes
-  console.log(results);
-  // Return results to caller
-  return results;
+  try {
+    await sequelize.query('BEGIN;', { type: QueryTypes.RAW });
+    // Lock the table
+    await sequelize.query('LOCK TABLE Sellers IN ACCESS EXCLUSIVE MODE;', { type: QueryTypes.RAW });
+    // Set query string
+    const query = `
+    INSERT INTO Sellers (sellerid)
+    VALUES (?);
+    `;
+    // Get query results from using query string and sequelize
+    const [results, metadata] = await sequelize.query(query, {
+      replacements: [userID],
+      type: QueryTypes.INSERT,
+    });
+    await sequelize.query('COMMIT;', { type: QueryTypes.RAW });
+    // Print out for debugging purposes
+    console.log(results);
+    // Return results to caller
+    return results;
+  } catch (error) {
+    console.error('Failed to update product quantity:', error);
+    await sequelize.query('ROLLBACK;', { type: QueryTypes.RAW });
+  }
 };
 
 /**
@@ -248,26 +277,36 @@ const makeSeller = async (userID: string) => {
  * @param userID ID of user
  */
 const createProduct = async (productInfo: ICreateProductInfo) => {
-  // Set query string
-  const query = `
-  INSERT INTO Products (shopid, price, name, quantity, description)
-  VALUES (?, ?, ?, ?, ?);
-  `;
-  // Get query results from using query string and sequelize
-  const [results, metadata] = await sequelize.query(query, {
-    replacements: [
-      productInfo.shopid,
-      productInfo.price,
-      productInfo.name,
-      productInfo.quantity,
-      productInfo.description,
-    ],
-    type: QueryTypes.INSERT,
-  });
-  // Print out for debugging purposes
-  console.log(results);
-  // Return results to caller
-  return results;
+  try {
+    await sequelize.query('BEGIN;', { type: QueryTypes.RAW });
+
+    // Lock the table
+    await sequelize.query('LOCK TABLE Products IN ACCESS EXCLUSIVE MODE;', { type: QueryTypes.RAW });
+    // Set query string
+    const query = `
+    INSERT INTO Products (shopid, price, name, quantity, description)
+    VALUES (?, ?, ?, ?, ?);
+    `;
+    // Get query results from using query string and sequelize
+    const [results, metadata] = await sequelize.query(query, {
+      replacements: [
+        productInfo.shopid,
+        productInfo.price,
+        productInfo.name,
+        productInfo.quantity,
+        productInfo.description,
+      ],
+      type: QueryTypes.INSERT,
+    });
+    await sequelize.query('COMMIT;', { type: QueryTypes.RAW });
+    // Print out for debugging purposes
+    console.log(results);
+    // Return results to caller
+    return results;
+  } catch (error) {
+    console.error('Failed to update product quantity:', error);
+    await sequelize.query('ROLLBACK;', { type: QueryTypes.RAW });
+  }
 };
 
 /**
@@ -293,25 +332,35 @@ const getUsersOrders = async (userid: string) => {
  * @param createOrderInfo
  */
 const createOrder = async (createOrderInfo: ICreateOrderInfo) => {
-  // Set query string
-  const query = `
-  INSERT INTO Orders (Buyer, Shop, Product, Quantity, OrderTime) VALUES
-  (?, ?, ?, ?, CURRENT_TIMESTAMP)
-  `;
-  // Get query results from using query string and sequelize
-  const [results, metadata] = await sequelize.query(query, {
-    replacements: [
-      createOrderInfo.userid,
-      createOrderInfo.shopid,
-      createOrderInfo.productid,
-      createOrderInfo.quantity,
-    ],
-    type: QueryTypes.INSERT,
-  });
-  // Print out for debugging purposes
-  console.log(results);
-  // Return results to caller
-  return results;
+  try {
+    await sequelize.query('BEGIN;', { type: QueryTypes.RAW });
+
+    // Lock the table
+    await sequelize.query('LOCK TABLE Orders IN ACCESS EXCLUSIVE MODE;', { type: QueryTypes.RAW });
+    // Set query string
+    const query = `
+    INSERT INTO Orders (Buyer, Shop, Product, Quantity, OrderTime) VALUES
+    (?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `;
+    // Get query results from using query string and sequelize
+    const [results, metadata] = await sequelize.query(query, {
+      replacements: [
+        createOrderInfo.userid,
+        createOrderInfo.shopid,
+        createOrderInfo.productid,
+        createOrderInfo.quantity,
+      ],
+      type: QueryTypes.INSERT,
+    });
+    await sequelize.query('COMMIT;', { type: QueryTypes.RAW });
+    // Print out for debugging purposes
+    console.log(results);
+    // Return results to caller
+    return results;
+  } catch (error){
+    console.error('Failed to update product quantity:', error);
+    await sequelize.query('ROLLBACK;', { type: QueryTypes.RAW });
+  }
 };
 
 /**
