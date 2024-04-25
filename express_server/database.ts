@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 
 // Create sequelize instance with database name, username, password, and host details
-const sequelize = new Sequelize("store", "john", "password", {
+const sequelize = new Sequelize("storeDB", "app_user", "abc", {
   host: "localhost",
   dialect: "postgres",
 });

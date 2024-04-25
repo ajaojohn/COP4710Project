@@ -66,18 +66,6 @@ CREATE TABLE Orders(
     CONSTRAINT order_product_fkey FOREIGN KEY (Shop, Product) REFERENCES Products(ShopID, ProductID)
 );
 
--- Reviews Table
-CREATE TABLE Reviews(
-    ReviewID UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    Shop UUID NOT NULL,
-    Product UUID NOT NULL,
-    DatePosted Date,
-    Comment TEXT,
-    Reviewer UUID NOT NULL REFERENCES Buyers(BuyerID),
-    Rating INTEGER NOT NULL,
-    CONSTRAINT review_product_fkey FOREIGN KEY (Shop, Product) REFERENCES Products(ShopID, ProductID) ON DELETE CASCADE
-);
-
 -- ShopInfoView View
 CREATE VIEW ShopInfoView AS
 SELECT
@@ -131,3 +119,6 @@ FROM Orders O
 JOIN Shops S ON O.shop = S.shopID
 JOIN Products P ON P.productID = O.product AND P.shopID = S.shopID
 ORDER BY O.ordertime DESC;
+
+-- Create Postgres user for the app
+CREATE USER app_user WITH PASSWORD 'abc';
