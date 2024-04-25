@@ -120,11 +120,11 @@ JOIN Shops S ON O.shop = S.shopID
 JOIN Products P ON P.productID = O.product AND P.shopID = S.shopID
 ORDER BY O.ordertime DESC;
 
--- Create Postgres user for the app
-CREATE USER app_user WITH PASSWORD 'abc';
-
 -- Add a user and give the privilieges to the user
 CREATE USER app_user WITH PASSWORD 'abc';
+-- Grant database access
+GRANT CONNECT ON DATABASE "storeDB" TO app_user;
+-- Grant relation specific access
 GRANT SELECT ON ShopInfoView TO app_user;
 GRANT SELECT, UPDATE, INSERT ON Products TO app_user;
 GRANT SELECT, INSERT, UPDATE ON Users TO app_user;
