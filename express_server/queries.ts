@@ -38,10 +38,8 @@ const getAllShopsInfo = async () => {
 const getAllProductsOfAShop = async (ShopID: string) => {
   // Set query string
   const query = `
-  SELECT * FROM Products
-  INNER JOIN Shops ON Products.ShopID = Shops.ShopID
-  WHERE Shops.shopid = ?
-  ORDER BY Products.name;
+  SELECT * FROM ProductInfoView
+  WHERE shopid = ?
   `;
   // Get query results using query string and sequelize
   const results: IProductInfo[] = await sequelize.query(query, {
@@ -369,10 +367,8 @@ const getProduct = async (shopid: string, productid: string) => {
 const getProductsOfShopLike = async (shopid: string, searchStr: string) => {
   // Set query string
   const query = `
-  SELECT * FROM Products
-  INNER JOIN Shops ON Products.ShopID = Shops.ShopID
-  WHERE Shops.shopid = ? AND LOWER(name) LIKE ?
-  ORDER BY Products.name;
+  SELECT * FROM ProductInfoView
+  WHERE shopid = ? AND LOWER(name) LIKE ?
   `;
   // Get query results from using query string and sequelize
   const results: IProductInfo[] = await sequelize.query(query, {

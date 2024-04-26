@@ -120,11 +120,19 @@ JOIN Shops S ON O.shop = S.shopID
 JOIN Products P ON P.productID = O.product AND P.shopID = S.shopID
 ORDER BY O.ordertime DESC;
 
+-- Create ProductInfoView
+CREATE VIEW ProductInfoView AS
+SELECT S.shopid, P.productid, P.name, P.price, S.shopname, P.quantity, P.description
+FROM Products P
+JOIN Shops S ON P.ShopID = S.ShopID
+ORDER BY P.name;
+
 -- Add a user and give the privilieges to the user
 CREATE USER app_user WITH PASSWORD 'abc';
 -- Grant database access
 GRANT CONNECT ON DATABASE "storeDB" TO app_user;
 -- Grant relation specific access
+GRANT INSERT, SELECT ON Buyers TO app_user;
 GRANT SELECT ON ShopInfoView TO app_user;
 GRANT SELECT, UPDATE, INSERT ON Products TO app_user;
 GRANT SELECT, INSERT, UPDATE ON Users TO app_user;
@@ -133,6 +141,7 @@ GRANT SELECT, INSERT ON Shops TO app_user;
 GRANT SELECT, INSERT ON Sellers TO app_user;
 GRANT SELECT ON OrdersInfoView TO app_user;
 GRANT SELECT, INSERT ON Orders TO app_user;
+GRANT SELECT ON ProductInfoView TO app_user;
 
 -- Add indexes
 CREATE INDEX email_index ON Users (Email);
