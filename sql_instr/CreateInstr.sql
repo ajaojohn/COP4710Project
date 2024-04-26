@@ -132,16 +132,17 @@ CREATE USER app_user WITH PASSWORD 'abc';
 -- Grant database access
 GRANT CONNECT ON DATABASE "storeDB" TO app_user;
 -- Grant relation specific access
-GRANT INSERT, SELECT ON Buyers TO app_user;
 GRANT SELECT ON ShopInfoView TO app_user;
+GRANT SELECT ON UserInfoView TO app_user;
+GRANT SELECT ON OrdersInfoView TO app_user;
+GRANT SELECT ON ProductInfoView TO app_user;
 GRANT SELECT, UPDATE, INSERT ON Products TO app_user;
 GRANT SELECT, INSERT, UPDATE ON Users TO app_user;
-GRANT SELECT ON UserInfoView TO app_user;
-GRANT SELECT, INSERT ON Shops TO app_user;
-GRANT SELECT, INSERT ON Sellers TO app_user;
-GRANT SELECT ON OrdersInfoView TO app_user;
-GRANT SELECT, INSERT ON Orders TO app_user;
-GRANT SELECT ON ProductInfoView TO app_user;
+GRANT SELECT, UPDATE, INSERT ON Shops TO app_user;
+GRANT SELECT, UPDATE, INSERT ON Sellers TO app_user;
+GRANT SELECT, UPDATE, INSERT ON Orders TO app_user;
+GRANT INSERT, SELECT ON Buyers TO app_user;
+
 
 -- Add indexes
 CREATE INDEX email_index ON Users (Email);
